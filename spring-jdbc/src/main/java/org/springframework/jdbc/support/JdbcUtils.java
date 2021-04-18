@@ -244,10 +244,10 @@ public abstract class JdbcUtils {
 			if ("LocalDate".equals(typeName)) {
 				return rs.getDate(index);
 			}
-			else if ("LocalTime".equals(typeName)) {
+			 if ("LocalTime".equals(typeName)) {
 				return rs.getTime(index);
 			}
-			else if ("LocalDateTime".equals(typeName)) {
+			 if ("LocalDateTime".equals(typeName)) {
 				return rs.getTimestamp(index);
 			}
 

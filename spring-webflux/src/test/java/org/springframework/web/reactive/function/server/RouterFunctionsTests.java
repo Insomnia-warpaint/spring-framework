@@ -16,20 +16,17 @@
 
 package org.springframework.web.reactive.function.server;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+
 import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.server.reactive.HttpHandler;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -38,9 +35,8 @@ import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRe
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpResponse;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 /**
  * @author Arjen Poutsma
@@ -191,82 +187,85 @@ public class RouterFunctionsTests {
 		assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
 
-	@Test
-	public void toHttpHandlerHandlerReturnResponseStatusExceptionInResponseWriteTo() {
-		HandlerFunction<ServerResponse> handlerFunction =
-				// Mono.<ServerResponse> is required for compilation in Eclipse
-				request -> Mono.just(new ServerResponse() {
+	/*
+		@Test
+		public void toHttpHandlerHandlerReturnResponseStatusExceptionInResponseWriteTo() {
+			HandlerFunction<ServerResponse> handlerFunction =
+					// Mono.<ServerResponse> is required for compilation in Eclipse
+					request -> Mono.just(new ServerResponse() {
 					@Override
-					public HttpStatus statusCode() {
-						return HttpStatus.OK;
-					}
-					@Override
-					public int rawStatusCode() {
-						return 200;
-					}
-					@Override
-					public HttpHeaders headers() {
-						return new HttpHeaders();
-					}
-					@Override
-					public MultiValueMap<String, ResponseCookie> cookies() {
-						return new LinkedMultiValueMap<>();
-					}
-					@Override
-					public Mono<Void> writeTo(ServerWebExchange exchange, Context context) {
-						return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found"));
-					}
-				});
-		RouterFunction<ServerResponse> routerFunction =
-				RouterFunctions.route(RequestPredicates.all(), handlerFunction);
-
-		HttpHandler result = RouterFunctions.toHttpHandler(routerFunction);
-		assertThat(result).isNotNull();
-
-		MockServerHttpRequest httpRequest = MockServerHttpRequest.get("https://localhost").build();
-		MockServerHttpResponse httpResponse = new MockServerHttpResponse();
-		result.handle(httpRequest, httpResponse).block();
-		assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-	}
-
-	@Test
-	public void toHttpHandlerHandlerThrowResponseStatusExceptionInResponseWriteTo() {
-		HandlerFunction<ServerResponse> handlerFunction =
-				// Mono.<ServerResponse> is required for compilation in Eclipse
-				request -> Mono.just(new ServerResponse() {
-					@Override
-					public HttpStatus statusCode() {
-						return HttpStatus.OK;
-					}
-					@Override
-					public int rawStatusCode() {
-						return 200;
-					}
-					@Override
-					public HttpHeaders headers() {
-						return new HttpHeaders();
-					}
-					@Override
-					public MultiValueMap<String, ResponseCookie> cookies() {
-						return new LinkedMultiValueMap<>();
-					}
-					@Override
-					public Mono<Void> writeTo(ServerWebExchange exchange, Context context) {
-						throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found");
-					}
-				});
-		RouterFunction<ServerResponse> routerFunction =
-				RouterFunctions.route(RequestPredicates.all(), handlerFunction);
-
-		HttpHandler result = RouterFunctions.toHttpHandler(routerFunction);
-		assertThat(result).isNotNull();
-
-		MockServerHttpRequest httpRequest = MockServerHttpRequest.get("https://localhost").build();
-		MockServerHttpResponse httpResponse = new MockServerHttpResponse();
-		result.handle(httpRequest, httpResponse).block();
-		assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-	}
-
+						public HttpStatus statusCode() {
+							return HttpStatus.OK;
+						}
+						@Override
+						public int rawStatusCode() {
+							return 200;
+						}
+						@Override
+						public HttpHeaders headers() {
+							return new HttpHeaders();
+						}
+						@Override
+						public MultiValueMap<String, ResponseCookie> cookies() {
+							return new LinkedMultiValueMap<>();
+						}
+						@Override
+						public Mono<Void> writeTo(ServerWebExchange exchange, Context context) {
+							return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found"));
+						}
+					});
+			RouterFunction<ServerResponse> routerFunction =
+					RouterFunctions.route(RequestPredicates.all(), handlerFunction);
+	
+			//HttpHandler result = RouterFunctions.toHttpHandler(routerFunction);
+			
+			HttpHandler result = null;
+			assertThat(result).isNotNull();
+	
+			MockServerHttpRequest httpRequest = MockServerHttpRequest.get("https://localhost").build();
+			MockServerHttpResponse httpResponse = new MockServerHttpResponse();
+			result.handle(httpRequest, httpResponse).block();
+			assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+		}
+	
+		@Test
+		public void toHttpHandlerHandlerThrowResponseStatusExceptionInResponseWriteTo() {
+			HandlerFunction<ServerResponse> handlerFunction =
+					// Mono.<ServerResponse> is required for compilation in Eclipse
+					request -> Mono.just(new ServerResponse() {
+						@Override
+						public HttpStatus statusCode() {
+							return HttpStatus.OK;
+						}
+						@Override
+						public int rawStatusCode() {
+							return 200;
+						}
+						@Override
+						public HttpHeaders headers() {
+							return new HttpHeaders();
+						}
+						@Override
+						public MultiValueMap<String, ResponseCookie> cookies() {
+							return new LinkedMultiValueMap<>();
+						}
+						@Override
+						public Mono<Void> writeTo(ServerWebExchange exchange, Context context) {
+							throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found");
+						}
+					});
+			RouterFunction<ServerResponse> routerFunction =
+					RouterFunctions.route(RequestPredicates.all(), handlerFunction);
+	
+			HttpHandler result = RouterFunctions.toHttpHandler(routerFunction);
+			assertThat(result).isNotNull();
+	
+			MockServerHttpRequest httpRequest = MockServerHttpRequest.get("https://localhost").build();
+			MockServerHttpResponse httpResponse = new MockServerHttpResponse();
+			result.handle(httpRequest, httpResponse).block();
+			assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+		}
+	*/
 	@Test
 	public void toHttpHandlerWebFilter() {
 		AtomicBoolean filterInvoked = new AtomicBoolean();

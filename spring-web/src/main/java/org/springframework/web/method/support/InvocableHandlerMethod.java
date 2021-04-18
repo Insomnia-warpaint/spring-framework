@@ -20,7 +20,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import org.springframework.core.CoroutinesUtils;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.KotlinDetector;
 import org.springframework.core.MethodParameter;
@@ -192,7 +191,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 		ReflectionUtils.makeAccessible(method);
 		try {
 			if (KotlinDetector.isSuspendingFunction(method)) {
-				return CoroutinesUtils.invokeSuspendingFunction(method, getBean(), args);
+				//return CoroutinesUtils.invokeSuspendingFunction(method, getBean(), args);
 			}
 			return method.invoke(getBean(), args);
 		}

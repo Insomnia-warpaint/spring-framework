@@ -26,6 +26,7 @@ import org.aspectj.lang.annotation.control.CodeGenerationHint;
  * @author Ramnivas Laddad
  * @since 2.5.2
  */
+@Deprecated
 public abstract aspect AbstractDependencyInjectionAspect {
 
 	private pointcut preConstructionCondition() :

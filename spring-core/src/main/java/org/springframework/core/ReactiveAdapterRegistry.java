@@ -24,19 +24,17 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
-import kotlinx.coroutines.CompletableDeferredKt;
-import kotlinx.coroutines.Deferred;
 import org.reactivestreams.Publisher;
+import org.springframework.lang.Nullable;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.ConcurrentReferenceHashMap;
+import org.springframework.util.ReflectionUtils;
+
 import reactor.blockhound.BlockHound;
 import reactor.blockhound.integration.BlockHoundIntegration;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import rx.RxReactiveStreams;
-
-import org.springframework.lang.Nullable;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.ConcurrentReferenceHashMap;
-import org.springframework.util.ReflectionUtils;
 
 /**
  * A registry of adapters to adapt Reactive Streams {@link Publisher} to/from
@@ -403,11 +401,13 @@ public class ReactiveAdapterRegistry {
 
 		@SuppressWarnings("KotlinInternalInJava")
 		void registerAdapters(ReactiveAdapterRegistry registry) {
-			registry.registerReactiveType(
+			/*
+			 registry.registerReactiveTyp
 					ReactiveTypeDescriptor.singleOptionalValue(Deferred.class,
 							() -> CompletableDeferredKt.CompletableDeferred(null)),
 					source -> CoroutinesUtils.deferredToMono((Deferred<?>) source),
 					source -> CoroutinesUtils.monoToDeferred(Mono.from(source)));
+			*/
 
 			registry.registerReactiveType(
 					ReactiveTypeDescriptor.multiValue(kotlinx.coroutines.flow.Flow.class, kotlinx.coroutines.flow.FlowKt::emptyFlow),

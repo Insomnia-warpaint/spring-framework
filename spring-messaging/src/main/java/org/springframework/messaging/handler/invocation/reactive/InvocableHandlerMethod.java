@@ -24,9 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import reactor.core.publisher.Mono;
-
-import org.springframework.core.CoroutinesUtils;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.KotlinDetector;
 import org.springframework.core.MethodParameter;
@@ -39,6 +36,8 @@ import org.springframework.messaging.handler.HandlerMethod;
 import org.springframework.messaging.handler.invocation.MethodArgumentResolutionException;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
+
+import reactor.core.publisher.Mono;
 
 /**
  * Extension of {@link HandlerMethod} that invokes the underlying method with
@@ -133,7 +132,8 @@ public class InvocableHandlerMethod extends HandlerMethod {
 				ReflectionUtils.makeAccessible(method);
 				if (KotlinDetector.isSuspendingFunction(method)) {
 					isSuspendingFunction = true;
-					value = CoroutinesUtils.invokeSuspendingFunction(method, getBean(), args);
+					//value = CoroutinesUtils.invokeSuspendingFunction(method, getBean(), args);
+					value = null;
 				}
 				else {
 					value = method.invoke(getBean(), args);

@@ -20,21 +20,13 @@ import java.lang.reflect.Method;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentMap;
 
-import io.vavr.control.Try;
-import kotlin.coroutines.Continuation;
-import kotlinx.coroutines.reactive.AwaitKt;
-import kotlinx.coroutines.reactive.ReactiveFlowKt;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.BeanFactoryAnnotationUtils;
-import org.springframework.core.CoroutinesUtils;
 import org.springframework.core.KotlinDetector;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.NamedThreadLocal;
@@ -54,6 +46,13 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.util.StringUtils;
+
+import io.vavr.control.Try;
+import kotlin.coroutines.Continuation;
+import kotlinx.coroutines.reactive.AwaitKt;
+import kotlinx.coroutines.reactive.ReactiveFlowKt;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Base class for transactional aspects, such as the {@link TransactionInterceptor}
@@ -363,7 +362,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 
 			InvocationCallback callback = invocation;
 			if (corInv != null) {
-				callback = () -> CoroutinesUtils.invokeSuspendingFunction(method, corInv.getTarget(), corInv.getArguments());
+				//callback = () -> CoroutinesUtils.invokeSuspendingFunction(method, corInv.getTarget(), corInv.getArguments());
 			}
 			Object result = txSupport.invokeWithinTransaction(method, targetClass, callback, txAttr, (ReactiveTransactionManager) tm);
 			if (corInv != null) {
